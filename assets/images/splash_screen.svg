@@ -1,0 +1,55 @@
+<svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1024" height="1024" fill="white"/>
+  
+  <!-- Red Dots Pattern (recreated from the image) -->
+  <g transform="translate(212, 50) scale(1.2)">
+    <!-- Top section -->
+    <circle cx="250" cy="30" r="30" fill="#FF0000"/>
+    
+    <!-- Second row -->
+    <circle cx="150" cy="120" r="35" fill="#FF0000"/>
+    <circle cx="330" cy="120" r="40" fill="#FF0000"/>
+    
+    <!-- Third row -->
+    <!-- <circle cx="70" cy="220" r="35" fill="#FF0000"/> -->
+    <circle cx="200" cy="230" r="50" fill="#FF0000"/>
+    <circle cx="350" cy="220" r="45" fill="#FF0000"/>
+    <circle cx="470" cy="220" r="30" fill="#FF0000"/>
+    <circle cx="570" cy="220" r="25" fill="#FF0000"/>
+    
+    <!-- Fourth row -->
+    <circle cx="30" cy="330" r="30" fill="#FF0000"/>
+    <circle cx="150" cy="330" r="45" fill="#FF0000"/>
+    <circle cx="280" cy="330" r="50" fill="#FF0000"/>
+    <circle cx="410" cy="330" r="30" fill="#FF0000"/>
+    <circle cx="520" cy="330" r="30" fill="#FF0000"/>
+    <circle cx="620" cy="330" r="25" fill="#FF0000"/>
+    
+    <!-- Fifth row -->
+    <circle cx="200" cy="450" r="45" fill="#FF0000"/>
+    <circle cx="350" cy="450" r="45" fill="#FF0000"/>
+    
+    <!-- Sixth row -->
+    <circle cx="150" cy="550" r="30" fill="#FF0000"/>
+    <circle cx="280" cy="550" r="40" fill="#FF0000"/>
+    
+    <!-- Bottom row -->
+    <!-- <circle cx="100" cy="650" r="25" fill="#FF0000"/> -->
+    <circle cx="220" cy="650" r="35" fill="#FF0000"/>
+    <circle cx="350" cy="650" r="30" fill="#FF0000"/>
+    <circle cx="470" cy="650" r="30" fill="#FF0000"/>
+    <circle cx="580" cy="650" r="25" fill="#FF0000"/>
+    
+    <!-- Final dot -->
+    <circle cx="320" cy="750" r="30" fill="#FF0000"/>
+  </g>
+  
+  <!-- TORAMA Text - positioned clearly below all dots -->
+  <text x="512" y="1050" font-family="Arial, sans-serif" font-size="80" font-weight="bold" text-anchor="middle" fill="#333333">TORAMA</text>
+  <!-- Added extra space below text -->
+  <rect x="0" y="1070" width="1024" height="44" fill="white" opacity="0"/>
+
+
+
+</svg>

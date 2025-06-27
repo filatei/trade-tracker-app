@@ -1,0 +1,47 @@
+{
+  "expo": {
+    "scheme": "torapp",
+    "userInterfaceStyle": "dark",
+    "orientation": "default",
+    "web": {
+      "output": "static"
+    },
+    "icon": "./assets/images/icon.png",
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "statusBar": {
+              "backgroundColor": "#000000",
+              "barStyle": "light-content"
+            }
+          },
+          "ios": {
+            "userInterfaceStyle": "dark"
+          }
+        }
+      ],
+      "expo-secure-store",
+      "expo-web-browser",
+      "expo-router"
+    ],
+    "name": "torapp",
+    "slug": "torapp",
+    "updates": {
+      "enabled": false,
+      "fallbackToCacheTimeout": 0,
+      "checkAutomatically": "NEVER"
+    },
+    "android": {
+      "package": "com.torama.torapp",
+      "edgeToEdge": true
+    },
+    "ios": {
+      "bundleIdentifier": "com.torama.torapp",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "Allow access to photos"
+      }
+    }
+  }
+}
