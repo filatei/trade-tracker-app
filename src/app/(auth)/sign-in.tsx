@@ -118,7 +118,7 @@ export default function Index() {
         </View>
 
         <View style={{ flex: 1 }} />
-        <Button
+        {/* <Button
           onPress={signInWithPasskey}
           style={{
             flexDirection: "row",
@@ -134,7 +134,7 @@ export default function Index() {
           <Text style={{ color: "white", fontWeight: "500" }}>
             Sign in with Passkey
           </Text>
-        </Button>
+        </Button> */}
         <Button
           onPress={handleSignInWithGoogle}
           style={{

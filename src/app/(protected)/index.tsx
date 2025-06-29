@@ -36,7 +36,7 @@ export default function HomeScreen() {
   const [newTargetDate, setNewTargetDate] = useState(new Date());
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
   const [showTargetDatePicker, setShowTargetDatePicker] = useState(false);
-  const [expandSchedule, setExpandSchedule] = useState(false);
+  const [expandSchedule, setExpandSchedule] = useState(true);
 
   const activeTarget = targets.find(t => t._id === targetId);
   const currentAmount = profits.reduce((acc, p) => acc + p.amount, 0);
@@ -52,6 +52,7 @@ export default function HomeScreen() {
       try {
         const ts = await getTargets();
         setTargets(ts);
+        console.log('targets', ts);
         const active = ts.find(t => t.status === 'active');
         if (active) setTargetId(active._id);
         else if (ts.length > 0) setTargetId(ts[0]._id);
@@ -160,6 +161,25 @@ export default function HomeScreen() {
           targetAmount={activeTarget.targetAmount || 1000000}
         />
       )}
+
+      {/* New Target Modal */}
+      <Modal visible={newTargetModalVisible} animationType="slide" onRequestClose={() => setNewTargetModalVisible(false)}>
+        <SafeAreaView className="flex-1 p-6 bg-white">
+          <Text className="text-xl font-semibold mb-4">Create New Target</Text>
+          <TextInput
+            placeholder="Target Amount"
+            keyboardType="numeric"
+            value={newTargetAmount}
+            onChangeText={setNewTargetAmount}
+            className="border border-gray-300 rounded px-3 py-2 mb-4"
+          />
+          {/* Add more fields as needed */}
+          <View className="space-y-2">
+            <Button title="Save" onPress={() => {/* handle save */}} />
+            <Button title="Cancel" onPress={() => setNewTargetModalVisible(false)} color="gray" />
+          </View>
+        </SafeAreaView>
+      </Modal>
 
     </ScrollView>
   );

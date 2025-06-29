@@ -54,7 +54,7 @@ export default function HomeScreen() {
   return (
     // <Container>
       <View style={[styles.container]}>
-        <Text className='text-3xl gap-2 mb-2 font-bold'>Welcome to Torapp</Text>
+        <Text className='text-3xl gap-2 mb-2 font-bold'>Welcome to Money App</Text>
         <Text className='text-gray-500 text-sm mb-4'>
           Your complete 
           business management solution

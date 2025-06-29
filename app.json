@@ -1,6 +1,6 @@
 {
   "expo": {
-    "scheme": "torapp",
+    "scheme": "money-app",
     "userInterfaceStyle": "dark",
     "orientation": "default",
     "web": {
@@ -26,22 +26,29 @@
       "expo-web-browser",
       "expo-router"
     ],
-    "name": "torapp",
-    "slug": "torapp",
+    "name": "money-app",
+    "slug": "money-app",
     "updates": {
       "enabled": false,
       "fallbackToCacheTimeout": 0,
       "checkAutomatically": "NEVER"
     },
     "android": {
-      "package": "com.torama.torapp",
+      "package": "ng.torama.money",
       "edgeToEdge": true
     },
     "ios": {
-      "bundleIdentifier": "com.torama.torapp",
+      "bundleIdentifier": "ng.torama.money",
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "Allow access to photos"
       }
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "1104a0ab-ef2d-47c1-aea9-8d0b49d0c180"
+      }
+    },
+    "owner": "filatei"
   }
 }

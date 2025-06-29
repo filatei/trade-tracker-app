@@ -1,4 +1,3 @@
-// src/screens/SplashScreen.tsx
 import React, { useEffect, useRef } from 'react';
 import {
   View,
@@ -6,58 +5,73 @@ import {
   StyleSheet,
   Dimensions,
   Image,
+  Easing,
+  Text,
 } from 'react-native';
 import { router } from 'expo-router';
 
 const { height } = Dimensions.get('window');
 
 export default function SplashScreen() {
-
-  // Animated values
   const logoY = useRef(new Animated.Value(-100)).current;
   const textOpacity = useRef(new Animated.Value(0)).current;
+  const containerOpacity = useRef(new Animated.Value(1)).current;
+  const containerY = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    // Sequence: slide logo down, then fade in text, then navigate
     Animated.sequence([
-      Animated.spring(logoY, {
+      Animated.timing(logoY, {
         toValue: height * 0.3,
+        duration: 1000,
+        easing: Easing.out(Easing.exp),
         useNativeDriver: true,
-        friction: 5,
       }),
       Animated.timing(textOpacity, {
         toValue: 1,
-        duration: 1200,
+        duration: 800,
         useNativeDriver: true,
       }),
-      Animated.delay(1300),
+      Animated.delay(1000),
     ]).start(() => {
-      // After splash, go to main app
-      // delay 1 second
-      setTimeout(() => {
-        router.replace('/(auth)/sign-in');  // or your initial route
-      }, 1000);
+      // Animate out
+      Animated.parallel([
+        Animated.timing(containerOpacity, {
+          toValue: 0,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(containerY, {
+          toValue: -50,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
+        router.replace('/(auth)/sign-in');
+      });
     });
-  }, [logoY, textOpacity]);
+  }, []);
 
   return (
-    <View style={[styles.container, { backgroundColor: '#000'  }]}>
+    <Animated.View
+      style={[
+        styles.container,
+        {
+          backgroundColor: '#000',
+          opacity: containerOpacity,
+          transform: [{ translateY: containerY }],
+        },
+      ]}
+    >
       <Animated.View style={[styles.logoContainer, { transform: [{ translateY: logoY }] }]}>
-        {/* Replace require with your logo path */}
-        <Image source={require('@/assets/images/logo.png')} style={styles.logo} />
+        <Image
+          source={require('@/assets/images/logo.png')}
+          style={styles.logo}
+        />
       </Animated.View>
-      <Animated.Text
-        style={[
-          styles.tagline,
-          {
-            opacity: textOpacity,
-            color: '#fff'
-          },
-        ]}
-      >
+      <Animated.Text style={[styles.tagline, { opacity: textOpacity, color: '#fff' }]}>
         Powered by Torama
       </Animated.Text>
-    </View>
+    </Animated.View>
   );
 }
 
@@ -78,7 +92,7 @@ const styles = StyleSheet.create({
   },
   tagline: {
     position: 'absolute',
-    top: height * 0.3 + 140, // logoY + logo height + spacing
+    top: height * 0.3 + 140,
     fontSize: 18,
     fontWeight: '600',
   },

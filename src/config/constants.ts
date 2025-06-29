@@ -1,6 +1,6 @@
 // src/config/constants.ts
 export const APP_CONFIG = {
-  SCHEME: 'torapp',
+  SCHEME: 'money-app',
   REDIRECT_URL: {
     SIGN_IN: '/(auth)/sign-in',
     PROTECTED: '/(protected)',

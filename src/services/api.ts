@@ -3,6 +3,7 @@ import { APP_CONFIG } from '@/config/constants';
 import { useAuthStore } from '@/store/authStore';
 import { Alert } from 'react-native';
 
+
 const api = axios.create({
   baseURL: APP_CONFIG.API_URL,
   timeout: 10000,
@@ -25,6 +26,8 @@ const processQueue = (error: any, token: string | null = null) => {
 api.interceptors.request.use(
   async (config) => {
     const { token, expiresAt } = useAuthStore.getState();
+    console.log('token', token);
+    console.log('timeUntilExpiration', timeUntilExpiration(expiresAt));
 
     if (!token) {
       Alert.alert("Auth Error", "Token is missing. Please sign in again.");
@@ -47,6 +50,8 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+    console.log(APP_CONFIG.API_URL, 'APP_CONFIG.API_URL')
+
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
@@ -71,6 +76,7 @@ api.interceptors.response.use(
       }
 
       try {
+        console.log(APP_CONFIG.API_URL, 'APP_CONFIG.API_URL')
         const res = await axios.post(`${APP_CONFIG.API_URL}/auth/refresh`, { refreshToken });
         const { token, expiresAt, refreshToken: newRefresh } = res.data;
 
@@ -92,5 +98,26 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+function timeUntilExpiration(expiryTimestampMs) {
+  const now = Date.now(); // current time in ms
+  let diff = expiryTimestampMs - now;
+
+  if (diff <= 0) {
+    return "Expired";
+  }
+
+  const seconds = Math.floor(diff / 1000);
+  const minutes = Math.floor(seconds / 60) % 60;
+  const hours = Math.floor(seconds / 3600) % 24;
+  const days = Math.floor(seconds / (3600 * 24));
+
+  return `${days} days, ${hours} hours, ${minutes} minutes and ${seconds} seconds remaining`;
+}
+
+// Example usage:
+const expiry = 1751121125000;
+console.log(timeUntilExpiration(expiry));
+
 
 export default api;
