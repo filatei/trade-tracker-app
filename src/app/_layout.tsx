@@ -36,10 +36,8 @@ export default function RootLayout() {
             <ClerkLoaded>
               <InitClerkToken />
               <RootLayoutNav /> {/* ✅ ensure something is returned */}
-              <View style={{ flex: 1, backgroundColor: '#000' }}>
-                  <StatusBar style="light" />
-              </View>
-              {/* <StatusBar style="light" backgroundColor="#000" /> */}
+             
+              <StatusBar style="light" backgroundColor="#000" />
             </ClerkLoaded>
           </ClerkProvider>
         </PaperProvider>
