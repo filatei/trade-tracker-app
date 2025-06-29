@@ -35,9 +35,9 @@ export default function RootLayout() {
           >
             <ClerkLoaded>
               <InitClerkToken />
-              <RootLayoutNav /> {/* ✅ ensure something is returned */}
+              <RootLayoutNav />
              
-              <StatusBar style="light" backgroundColor="#000" />
+              <StatusBar style="light"  />
             </ClerkLoaded>
           </ClerkProvider>
         </PaperProvider>

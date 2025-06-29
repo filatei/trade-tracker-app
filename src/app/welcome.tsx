@@ -42,8 +42,8 @@
 
 
 import React from 'react';
-import { View, StyleSheet, Button } from 'react-native';
-import { Text } from '@/components/Text';
+import { View, StyleSheet, Button, Text } from 'react-native';
+
 import { router } from 'expo-router';
 // import { Container } from '../components/common/Container';
 // import { useTheme } from '../contexts/ThemeContext';
@@ -54,7 +54,7 @@ export default function HomeScreen() {
   return (
     // <Container>
       <View style={[styles.container]}>
-        <Text className='text-3xl gap-2 mb-2 font-bold'>Welcome to Money App</Text>
+        <Text className='text-2xl gap-2 mb-2 font-bold text-white'>Welcome to Money App</Text>
         <Text className='text-gray-500 text-sm mb-4'>
           Your complete 
           business management solution
