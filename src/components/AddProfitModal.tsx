@@ -1,34 +1,31 @@
 // src/components/AddProfitModal.tsx
 import React, { useState } from 'react';
-import {
-  Modal,
-  SafeAreaView,
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Button,
-  Alert,
-} from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { Modal, View, TextInput, Button, Alert, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { Text } from '@/components/Text';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { submitProfit, getProfits } from '@/services/traderProfitService';
+import { DatePickerModal } from 'react-native-paper-dates';
+import { format } from 'date-fns';
 
-interface AddProfitModalProps {
+export default function AddProfitModal({
+  visible,
+  onClose,
+  targetId,
+  onProfitSubmitted,
+}: {
   visible: boolean;
   onClose: () => void;
   targetId: string;
   onProfitSubmitted: (profits: any[]) => void;
-}
-
-export default function AddProfitModal({ visible, onClose, targetId, onProfitSubmitted }: AddProfitModalProps) {
+}) {
   const [profit, setProfit] = useState('');
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleAddProfit = async () => {
+  const handleSubmit = async () => {
     Alert.alert('Confirm', `Submit profit of $${profit} on ${date.toDateString()}?`, [
       { text: 'Cancel', style: 'cancel' },
       {
@@ -50,9 +47,9 @@ export default function AddProfitModal({ visible, onClose, targetId, onProfitSub
 
             const updated = await getProfits(targetId);
             onProfitSubmitted(updated);
-            onClose();
             setProfit('');
             setDate(new Date());
+            onClose();
           } catch (err: any) {
             const offlineQueue = JSON.parse(await AsyncStorage.getItem('offlineProfits') || '[]');
             offlineQueue.push({ date, amount: parseFloat(profit), targetId });
@@ -90,30 +87,27 @@ export default function AddProfitModal({ visible, onClose, targetId, onProfitSub
           onPress={() => setShowDatePicker(true)}
           className="border border-gray-300 rounded px-3 py-2 bg-gray-50 mb-4"
         >
-          <Text>{date.toDateString()}</Text>
+          <Text>{format(date, 'PPP')}</Text>
         </TouchableOpacity>
 
-        {showDatePicker && (
-          <DateTimePicker
-            value={date}
-            mode="date"
-            display="default"
-            onChange={(event, selectedDate) => {
-              setShowDatePicker(false);
-              if (selectedDate) setDate(selectedDate);
-            }}
-          />
-        )}
-
-        <Button
-          title="✅ Submit Profit"
-          onPress={handleAddProfit}
-          disabled={!profit || !targetId || loading}
+        <DatePickerModal
+          locale="en"
+          mode="single"
+          visible={showDatePicker}
+          date={date}
+          onDismiss={() => setShowDatePicker(false)}
+          onConfirm={({ date }) => {
+            if (date) setDate(date);
+            setShowDatePicker(false);
+          }}
         />
 
+        <Button title="✅ Submit Profit" onPress={handleSubmit} disabled={!profit || !targetId} />
         <View className="mt-2">
           <Button title="❌ Cancel" onPress={onClose} color="gray" />
         </View>
+
+        {loading && <ActivityIndicator className="mt-4" />}
       </SafeAreaView>
     </Modal>
   );

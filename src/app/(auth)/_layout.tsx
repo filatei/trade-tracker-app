@@ -3,7 +3,6 @@ import { useAuth } from '@clerk/clerk-expo';
 import { ActivityIndicator, View } from 'react-native';
 
 export default function AuthLayout() {
-  console.log('Auth layout');
   const { isSignedIn, isLoaded } = useAuth();
 
   if (!isLoaded) {

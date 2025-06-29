@@ -4,39 +4,41 @@ import { Stack } from 'expo-router';
 import { ClerkLoaded, ClerkProvider, useAuth } from '@clerk/clerk-expo';
 import { tokenCache } from '@clerk/clerk-expo/token-cache';
 import { DarkTheme, ThemeProvider } from "@react-navigation/native";
-import SplashScreen from '@/components/SplashScreen';
-import { APP_CONFIG } from '@/config/constants';
 import { StatusBar } from 'expo-status-bar';
+// import SplashScreen from '@/components/SplashScreen';
+import { APP_CONFIG } from '@/config/constants';
 import { useAuthStore } from '@/store/authStore';
 import * as SystemUI from 'expo-system-ui';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { Provider as PaperProvider } from 'react-native-paper'; // ✅ ADD THIS
 
-// Import global CSS
 import '../global.css';
 
 SystemUI.setBackgroundColorAsync('#000');
 
 export default function RootLayout() {
-  const [showSplash, setShowSplash] = useState(true);
+  // const [showSplash, setShowSplash] = useState(true);
 
-  useEffect(() => {
-    const timer = setTimeout(() => setShowSplash(false), 2000);
-    return () => clearTimeout(timer);
-  }, []);
+  // useEffect(() => {
+  //   // const timer = setTimeout(() => setShowSplash(false), 2000);
+  //   return () => clearTimeout(timer);
+  // }, []);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ThemeProvider value={DarkTheme}>
-        <ClerkProvider
-          publishableKey={APP_CONFIG.CLERK_PUBLISHABLE_KEY}
-          tokenCache={tokenCache}
-        >
-          <ClerkLoaded>
-            <InitClerkToken />
-            {showSplash ? <SplashScreen /> : <RootLayoutNav />}
-            <StatusBar style="light" backgroundColor="#000" />
-          </ClerkLoaded>
-        </ClerkProvider>
+        <PaperProvider> {/* ✅ WRAPS YOUR ENTIRE APP */}
+          <ClerkProvider
+            publishableKey={APP_CONFIG.CLERK_PUBLISHABLE_KEY}
+            tokenCache={tokenCache}
+          >
+            <ClerkLoaded>
+              <InitClerkToken />
+              <RootLayoutNav /> {/* ✅ ensure something is returned */}
+              <StatusBar style="light" backgroundColor="#000" />
+            </ClerkLoaded>
+          </ClerkProvider>
+        </PaperProvider>
       </ThemeProvider>
     </GestureHandlerRootView>
   );

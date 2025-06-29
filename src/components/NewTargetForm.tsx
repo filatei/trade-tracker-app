@@ -8,13 +8,13 @@ import {
   Button,
   Alert,
   Modal,
-  Platform,
 } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import Toast from 'react-native-toast-message';
 import { submitTarget, getTargets } from '@/services/traderTargetService';
 import { z } from 'zod';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { DatePickerModal } from 'react-native-paper-dates';
+import { format } from 'date-fns';
 
 const TargetSchema = z.object({
   targetAmount: z.string().min(1, 'Required'),
@@ -102,19 +102,20 @@ export default function NewTargetForm({ visible, onClose, onTargetCreated }: {
               onPress={() => setShowStartDatePicker(true)}
               className="border border-gray-300 rounded px-3 py-2 bg-gray-50"
             >
-              <Text>{newStartDate.toDateString()}</Text>
+              <Text>{format(newStartDate, 'PPP')}</Text>
             </TouchableOpacity>
-            {showStartDatePicker && (
-              <DateTimePicker
-                value={newStartDate}
-                mode="date"
-                display="default"
-                onChange={(e, d) => {
-                  setShowStartDatePicker(Platform.OS === 'ios');
-                  if (d) setNewStartDate(d);
-                }}
-              />
-            )}
+
+            <DatePickerModal
+              locale="en"
+              mode="single"
+              visible={showStartDatePicker}
+              date={newStartDate}
+              onDismiss={() => setShowStartDatePicker(false)}
+              onConfirm={({ date }) => {
+                if (date) setNewStartDate(date);
+                setShowStartDatePicker(false);
+              }}
+            />
           </View>
 
           <View>
@@ -123,19 +124,20 @@ export default function NewTargetForm({ visible, onClose, onTargetCreated }: {
               onPress={() => setShowTargetDatePicker(true)}
               className="border border-gray-300 rounded px-3 py-2 bg-gray-50"
             >
-              <Text>{newTargetDate.toDateString()}</Text>
+              <Text>{format(newTargetDate, 'PPP')}</Text>
             </TouchableOpacity>
-            {showTargetDatePicker && (
-              <DateTimePicker
-                value={newTargetDate}
-                mode="date"
-                display="default"
-                onChange={(e, d) => {
-                  setShowTargetDatePicker(Platform.OS === 'ios');
-                  if (d) setNewTargetDate(d);
-                }}
-              />
-            )}
+
+            <DatePickerModal
+              locale="en"
+              mode="single"
+              visible={showTargetDatePicker}
+              date={newTargetDate}
+              onDismiss={() => setShowTargetDatePicker(false)}
+              onConfirm={({ date }) => {
+                if (date) setNewTargetDate(date);
+                setShowTargetDatePicker(false);
+              }}
+            />
           </View>
 
           <View className="pt-6 space-y-2">
