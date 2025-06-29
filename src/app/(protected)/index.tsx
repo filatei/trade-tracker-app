@@ -14,6 +14,23 @@ import { ProgressChart } from 'react-native-chart-kit';
 import { Dimensions } from 'react-native';
 import { getTargets, submitTarget } from '@/services/traderTargetService';
 import DailyGrowthTable from '@/components/DailyGrowthTable';
+import NewTargetForm from '@/components/NewTargetForm';
+import NetInfo from '@react-native-community/netinfo';
+import { Calendar } from 'react-native-calendars';
+import AddProfitModal from '@/components/AddProfitModal';
+import TargetSelectorModal from '@/components/TargetSelectorModal';
+import DashboardHeader from '@/components/DashboardHeader';
+import RecentProfitsList from '@/components/RecentProfitsList';
+import ProfitCalendar from '@/components/ProfitCalendar';
+import { useOfflineProfitSync } from '@/hooks/useOfflineProfitSync';
+
+type DateObject = {
+  dateString: string; // e.g. '2025-06-29'
+  day: number;
+  month: number;
+  year: number;
+  timestamp: number;
+};
 
 export default function HomeScreen() {
   const { user, isSignedIn } = useUser();
@@ -43,6 +60,7 @@ export default function HomeScreen() {
   const targetAmount = activeTarget?.targetAmount || 1000000;
   const percentageAchieved = (currentAmount + (activeTarget?.initialAmount || 0)) / targetAmount || 0.01;
 
+  useOfflineProfitSync(targetId, setProfits);
   useEffect(() => {
     if (!isSignedIn) {
       router.replace('/(auth)/sign-in');
@@ -85,16 +103,36 @@ export default function HomeScreen() {
         onPress: async () => {
           try {
             setLoading(true);
-            await submitProfit({ date: date.toISOString(), amount: parseFloat(profit), targetId });
-            Toast.show({ type: 'success', text1: 'Profit Saved', text2: `$${profit} on ${date.toDateString()}` });
+            await submitProfit({
+              date: date.toISOString(),
+              amount: parseFloat(profit),
+              targetId,
+            });
+  
+            Toast.show({
+              type: 'success',
+              text1: 'Profit Saved',
+              text2: `$${profit} on ${date.toDateString()}`,
+            });
+  
+            // Refetch updated profits
+            const updated = await getProfits(targetId);
+            setProfits(updated);
+  
+            // Reset UI
             setAddModalVisible(false);
             setProfit('');
             setDate(new Date());
-          } catch (err) {
+          } catch (err: any) {
             const offlineQueue = JSON.parse(await AsyncStorage.getItem('offlineProfits') || '[]');
             offlineQueue.push({ date, amount: parseFloat(profit), targetId });
             await AsyncStorage.setItem('offlineProfits', JSON.stringify(offlineQueue));
-            Alert.alert('Offline', 'Saved locally and will sync later');
+  
+            if (err?.response?.status === 409) {
+              Alert.alert('Duplicate', 'You already submitted profit for this day.');
+            } else {
+              Alert.alert('Offline', 'Saved locally and will sync later');
+            }
           } finally {
             setLoading(false);
           }
@@ -115,14 +153,8 @@ export default function HomeScreen() {
   return (
     <ScrollView className="flex-1 px-4 pt-6 bg-white">
       {/* Dashboard remains above */}
-      <View className="m-2 flex-row items-center justify-between gap-2">
-        <Text className="text-xl font-bold text-gray-800 mb-4">📈 Trader Dashboard</Text>
-    
-              <Image
-              source={{ uri: user?.imageUrl }}
-              style={{ width: 32, height: 32, borderRadius: 16 }}
-              />
-        </View>
+      <DashboardHeader userImageUrl={user?.imageUrl || null} />
+
       <Text className="text-lg mb-2">Progress toward ${targetAmount.toLocaleString()}</Text>
       <ProgressChart
         data={{ labels: ['Profit'], data: [percentageAchieved] }}
@@ -139,9 +171,12 @@ export default function HomeScreen() {
         }}
         hideLegend={false}
       />
+      <RecentProfitsList profits={profits} />
+
       <Text className="mt-2 text-center mb-4">
         ${currentAmount.toLocaleString()} / ${targetAmount.toLocaleString()}
       </Text>
+      <ProfitCalendar profits={profits} />
 
       {/* Control buttons */}
       <View className="flex-row justify-end space-x-3 mb-4">
@@ -170,23 +205,32 @@ export default function HomeScreen() {
       )}
 
       {/* New Target Modal */}
-      <Modal visible={newTargetModalVisible} animationType="slide" onRequestClose={() => setNewTargetModalVisible(false)}>
-        <SafeAreaView className="flex-1 p-6 bg-white">
-          <Text className="text-xl font-semibold mb-4">Create New Target</Text>
-          <TextInput
-            placeholder="Target Amount"
-            keyboardType="numeric"
-            value={newTargetAmount}
-            onChangeText={setNewTargetAmount}
-            className="border border-gray-300 rounded px-3 py-2 mb-4"
-          />
-          {/* Add more fields as needed */}
-          <View className="space-y-2">
-            <Button title="Save" onPress={() => {/* handle save */}} />
-            <Button title="Cancel" onPress={() => setNewTargetModalVisible(false)} color="gray" />
-          </View>
-        </SafeAreaView>
-      </Modal>
+      <NewTargetForm
+        visible={newTargetModalVisible}
+        onClose={() => setNewTargetModalVisible(false)}
+        onTargetCreated={(ts) => {
+          setTargets(ts);
+          const active = ts.find(t => t.status === 'active');
+          if (active) setTargetId(active._id);
+        }}
+      />
+
+    <TargetSelectorModal
+      visible={targetModalVisible}
+      targets={targets}
+      selectedTargetId={targetId}
+      onClose={() => setTargetModalVisible(false)}
+      onSelect={(id) => setTargetId(id)}
+    />
+
+    <AddProfitModal
+      visible={addModalVisible}
+      onClose={() => setAddModalVisible(false)}
+      targetId={targetId}
+      onProfitSubmitted={(updated) => setProfits(updated)}
+    />
+
+      
 
     </ScrollView>
   );

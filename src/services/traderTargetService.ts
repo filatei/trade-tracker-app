@@ -10,11 +10,7 @@ export interface TargetEntry {
 
 export const submitTarget = async (payload: TargetEntry): Promise<any> => {
   console.log('submitTarget', payload);
-  const res = await api.post('/tradetargets', payload, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
+  const res = await api.post('/tradetargets', payload); // no headers override
   return res.data;
 };
 
