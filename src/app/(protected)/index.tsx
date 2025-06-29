@@ -115,7 +115,14 @@ export default function HomeScreen() {
   return (
     <ScrollView className="flex-1 px-4 pt-6 bg-white">
       {/* Dashboard remains above */}
-      <Text className="text-xl font-bold text-gray-800 mb-4">📈 Trader Dashboard</Text>
+      <View className="m-2 flex-row items-center justify-between gap-2">
+        <Text className="text-xl font-bold text-gray-800 mb-4">📈 Trader Dashboard</Text>
+    
+              <Image
+              source={{ uri: user?.imageUrl }}
+              style={{ width: 32, height: 32, borderRadius: 16 }}
+              />
+        </View>
       <Text className="text-lg mb-2">Progress toward ${targetAmount.toLocaleString()}</Text>
       <ProgressChart
         data={{ labels: ['Profit'], data: [percentageAchieved] }}
