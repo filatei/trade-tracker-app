@@ -61,6 +61,7 @@ export default function HomeScreen() {
   const percentageAchieved = (currentAmount + (activeTarget?.initialAmount || 0)) / targetAmount || 0.01;
 
   useOfflineProfitSync(targetId, setProfits);
+  
   useEffect(() => {
     if (!isSignedIn) {
       router.replace('/(auth)/sign-in');
@@ -95,51 +96,7 @@ export default function HomeScreen() {
     fetchProfits();
   }, [targetId]);
 
-  const handleAddProfit = async () => {
-    Alert.alert('Confirm', `Submit profit of $${profit} on ${date.toDateString()}?`, [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'OK',
-        onPress: async () => {
-          try {
-            setLoading(true);
-            await submitProfit({
-              date: date.toISOString(),
-              amount: parseFloat(profit),
-              targetId,
-            });
-  
-            Toast.show({
-              type: 'success',
-              text1: 'Profit Saved',
-              text2: `$${profit} on ${date.toDateString()}`,
-            });
-  
-            // Refetch updated profits
-            const updated = await getProfits(targetId);
-            setProfits(updated);
-  
-            // Reset UI
-            setAddModalVisible(false);
-            setProfit('');
-            setDate(new Date());
-          } catch (err: any) {
-            const offlineQueue = JSON.parse(await AsyncStorage.getItem('offlineProfits') || '[]');
-            offlineQueue.push({ date, amount: parseFloat(profit), targetId });
-            await AsyncStorage.setItem('offlineProfits', JSON.stringify(offlineQueue));
-  
-            if (err?.response?.status === 409) {
-              Alert.alert('Duplicate', 'You already submitted profit for this day.');
-            } else {
-              Alert.alert('Offline', 'Saved locally and will sync later');
-            }
-          } finally {
-            setLoading(false);
-          }
-        },
-      },
-    ]);
-  };
+
 
   if (!targetId && targets.length > 0) {
     return (
@@ -223,12 +180,14 @@ export default function HomeScreen() {
       onSelect={(id) => setTargetId(id)}
     />
 
-    <AddProfitModal
-      visible={addModalVisible}
-      onClose={() => setAddModalVisible(false)}
-      targetId={targetId}
-      onProfitSubmitted={(updated) => setProfits(updated)}
-    />
+    {targetId !== '' && (
+      <AddProfitModal
+        visible={addModalVisible}
+        onClose={() => setAddModalVisible(false)}
+        targetId={targetId}
+        onProfitSubmitted={(updated) => setProfits(updated)}
+      />
+    )}
 
       
 

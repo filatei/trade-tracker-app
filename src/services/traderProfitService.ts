@@ -8,8 +8,13 @@ export interface ProfitEntry {
 }
 
 export const submitProfit = async (payload: ProfitEntry): Promise<any> => {
-  const res = await api.post('/trade-profits', payload);
-  return res.data;
+  try {
+    const res = await api.post('/trade-profits', payload);
+    return res.data;
+  } catch (err) {
+    console.error('submitProfit error:', err);
+    throw err;
+  }
 };
 
 export const getProfits = async (targetId: string): Promise<any[]> => {

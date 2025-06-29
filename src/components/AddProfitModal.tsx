@@ -26,11 +26,13 @@ export default function AddProfitModal({
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
+    console.log('🚀 handleSubmit called');
     Alert.alert('Confirm', `Submit profit of $${profit} on ${date.toDateString()}?`, [
       { text: 'Cancel', style: 'cancel' },
       {
         text: 'OK',
         onPress: async () => {
+          console.log('✅ Submitting to backend', { profit, date, targetId });
           try {
             setLoading(true);
             await submitProfit({
@@ -102,7 +104,7 @@ export default function AddProfitModal({
           }}
         />
 
-        <Button title="✅ Submit Profit" onPress={handleSubmit} disabled={!profit || !targetId} />
+        <Button title="✅ Submit Profit" onPress={handleSubmit} disabled={loading || !profit || !targetId} />
         <View className="mt-2">
           <Button title="❌ Cancel" onPress={onClose} color="gray" />
         </View>

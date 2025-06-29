@@ -13,6 +13,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Provider as PaperProvider } from 'react-native-paper'; // ✅ ADD THIS
 
 import '../global.css';
+import { View } from 'react-native';
 
 SystemUI.setBackgroundColorAsync('#000');
 
@@ -35,7 +36,10 @@ export default function RootLayout() {
             <ClerkLoaded>
               <InitClerkToken />
               <RootLayoutNav /> {/* ✅ ensure something is returned */}
-              <StatusBar style="light" backgroundColor="#000" />
+              <View style={{ flex: 1, backgroundColor: '#000' }}>
+                  <StatusBar style="light" />
+              </View>
+              {/* <StatusBar style="light" backgroundColor="#000" /> */}
             </ClerkLoaded>
           </ClerkProvider>
         </PaperProvider>
