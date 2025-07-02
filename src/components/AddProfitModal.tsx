@@ -1,6 +1,6 @@
 // src/components/AddProfitModal.tsx
 import React, { useState } from 'react';
-import { Modal, View, TextInput, Button, Alert, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { Modal, View, TextInput, Button, Alert, TouchableOpacity, ActivityIndicator, Platform } from 'react-native';
 import { Text } from '@/components/Text';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
@@ -27,48 +27,56 @@ export default function AddProfitModal({
 
   const handleSubmit = async () => {
     console.log('🚀 handleSubmit called');
-    Alert.alert('Confirm', `Submit profit of $${profit} on ${date.toDateString()}?`, [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'OK',
-        onPress: async () => {
-          console.log('✅ Submitting to backend', { profit, date, targetId });
-          try {
-            setLoading(true);
-            await submitProfit({
-              date: date.toISOString(),
-              amount: parseFloat(profit),
-              targetId,
-            });
-
-            Toast.show({
-              type: 'success',
-              text1: 'Profit Saved',
-              text2: `$${profit} on ${date.toDateString()}`,
-            });
-
-            const updated = await getProfits(targetId);
-            onProfitSubmitted(updated);
-            setProfit('');
-            setDate(new Date());
-            onClose();
-          } catch (err: any) {
-            const offlineQueue = JSON.parse(await AsyncStorage.getItem('offlineProfits') || '[]');
-            offlineQueue.push({ date, amount: parseFloat(profit), targetId });
-            await AsyncStorage.setItem('offlineProfits', JSON.stringify(offlineQueue));
-
-            if (err?.response?.status === 409) {
-              Alert.alert('Duplicate', 'You already submitted profit for this day.');
-            } else {
-              Alert.alert('Offline', 'Saved locally and will sync later');
-            }
-          } finally {
-            setLoading(false);
-          }
+    
+    const confirmAndSubmit = async () => {
+      console.log('✅ Submitting to backend', { profit, date, targetId });
+      try {
+        setLoading(true);
+        await submitProfit({
+          date: date.toISOString(),
+          amount: parseFloat(profit),
+          targetId,
+        });
+  
+        Toast.show({
+          type: 'success',
+          text1: 'Profit Saved',
+          text2: `$${profit} on ${date.toDateString()}`,
+        });
+  
+        const updated = await getProfits(targetId);
+        onProfitSubmitted(updated);
+        setProfit('');
+        setDate(new Date());
+        onClose();
+      } catch (err: any) {
+        const offlineQueue = JSON.parse(await AsyncStorage.getItem('offlineProfits') || '[]');
+        offlineQueue.push({ date, amount: parseFloat(profit), targetId });
+        await AsyncStorage.setItem('offlineProfits', JSON.stringify(offlineQueue));
+  
+        if (err?.response?.status === 409) {
+          Alert.alert('Duplicate', 'You already submitted profit for this day.');
+        } else {
+          Alert.alert('Offline', 'Saved locally and will sync later');
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    if (Platform.OS === 'web') {
+      confirmAndSubmit(); // Skip alert on web
+    } else {
+      Alert.alert('Confirm', `Submit profit of $${profit} on ${date.toDateString()}?`, [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'OK',
+          onPress: confirmAndSubmit,
         },
-      },
-    ]);
+      ]);
+    }
   };
+  
 
   return (
     <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
