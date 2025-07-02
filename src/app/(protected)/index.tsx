@@ -114,7 +114,7 @@ export default function HomeScreen() {
 
       <Text className="text-lg mb-2">Progress toward ${targetAmount.toLocaleString()}</Text>
       <ProgressChart
-        data={{ labels: ['Profit'], data: [percentageAchieved] }}
+        data={{ data: [percentageAchieved] }}
         width={Dimensions.get('window').width - 40}
         height={160}
         strokeWidth={12}
@@ -126,8 +126,12 @@ export default function HomeScreen() {
           color: (opacity = 1) => `rgba(10, 132, 255, ${opacity})`,
           labelColor: () => '#333',
         }}
-        hideLegend={false}
+        hideLegend={true}
       />
+      <Text className="text-center mt-2 text-base font-semibold text-gray-700">
+        Profit {(percentageAchieved * 100).toFixed(2)}%
+      </Text>
+
       <RecentProfitsList profits={profits} />
 
       <Text className="mt-2 text-center mb-4">
